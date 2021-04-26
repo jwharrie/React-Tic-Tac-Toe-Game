@@ -84,6 +84,8 @@ class Game extends React.Component {
     });
   }
 
+  // Allow player to jump to a specific move in game's history.
+  // Achieved by setting state's stepNumber to step, and then setting xIsNext with equality check.
   jumpTo(step) {
     this.setState({
       stepNumber: step,
@@ -92,11 +94,14 @@ class Game extends React.Component {
   }
 
   render() {
+    // Retrieve history of moves and retrieve current one.
     const history = this.state.history;
     const current = history[this.state.stepNumber];
+
     // Checks if a player won. If winner, returns symbol of winner which is used in winner message.
     const winner = calculateWinner(current.squares);
 
+    // Creates set of buttons that let you jump to a specific move in game's history.
     const moves = history.map((step, move) => {
       const desc = move ? 'Go to move #' + move : 'Go to game start';
       return (
