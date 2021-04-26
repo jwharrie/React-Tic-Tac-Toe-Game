@@ -5,36 +5,42 @@ import './index.css';
 /*
 React component for each square in game.
 Square is represented as a button. It currently shows 'X' when clicked.
+Square is a controlled component of Board component.
 */
-class Square extends React.Component {
-    // Initializing Square's state as null (no value shown).
-    constructor(props) {
-      super(props);
-      this.state = {
-        value: null,
-      };
-    }
-
+function Square(props) {
     // Renders button element that displays 'X' when user clicks it.
-    render() {
-      return (
-        <button 
-          className="square" 
-          onClick={() => this.setState({value: 'X'})} 
-        >
-          {this.state.value}
-        </button>
-      );
-    }
+    return (
+      <button className="square" onClick={props.handleClick} >
+        {props.value}
+      </button>
+    );
 }
 
 /*
 React component containing tic-tac-toe game board.
+State of app lives in Board component, where it contains an array of length 9.
+Board controls Square components.
 */
 class Board extends React.Component {
-  // Creates Square element with its assigned index.
+  // State array is initialized with null values.
+  constructor(props) {
+    super(props);
+    this.state = {
+      squares: Array(9).fill(null),
+    };
+
+  }
+
+  // Creates Square element that is either empty or filled with an 'X'/'O'.
   renderSquare(i) {
-    return <Square value={i} />;
+    return <Square value={this.state.squares[i]} handleClick={() => this.handleClick(i)} />;
+  }
+
+  // When a square is clicked, the value squares[i] changes from null to 'X'/'O'.
+  handleClick(i) {
+    const squares = this.state.squares.slice();
+    squares[i] = 'X';
+    this.setState({squares: squares});
   }
 
   render() {
