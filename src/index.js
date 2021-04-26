@@ -4,13 +4,25 @@ import './index.css';
 
 /*
 React component for each square in game.
-Square is represented as a button.
+Square is represented as a button. It currently shows 'X' when clicked.
 */
 class Square extends React.Component {
+    // Initializing Square's state as null (no value shown).
+    constructor(props) {
+      super(props);
+      this.state = {
+        value: null,
+      };
+    }
+
+    // Renders button element that displays 'X' when user clicks it.
     render() {
       return (
-        <button className="square">
-          {/* TODO */}
+        <button 
+          className="square" 
+          onClick={() => this.setState({value: 'X'})} 
+        >
+          {this.state.value}
         </button>
       );
     }
@@ -22,7 +34,7 @@ React component containing tic-tac-toe game board.
 class Board extends React.Component {
   // Creates Square element with its assigned index.
   renderSquare(i) {
-    return <Square />;
+    return <Square value={i} />;
   }
 
   render() {
