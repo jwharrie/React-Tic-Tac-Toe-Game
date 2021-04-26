@@ -22,51 +22,14 @@ State of app lives in Board component, where it contains an array of length 9.
 Board controls Square components.
 */
 class Board extends React.Component {
-  // State array is initialized with null values.
-  constructor(props) {
-    super(props);
-    this.state = {
-      squares: Array(9).fill(null),
-      xIsNext: true,
-    };
-
-  }
-
   // Creates Square element that is either empty or filled with an 'X'/'O'.
   renderSquare(i) {
-    return <Square value={this.state.squares[i]} handleClick={() => this.handleClick(i)} />;
-  }
-
-  // When a square is clicked, the value squares[i] changes from null to 'X'/'O'.
-  handleClick(i) {
-    // Make copy of squares state.
-    const squares = this.state.squares.slice();
-
-    // Checks if winner declared or square already clicked. If so, function terminates.
-    if(calculateWinner(squares) || squares[i]) {
-      return;
-    }
-
-    // 'X' or 'O' is chosen based on boolean flag state xIsNext.
-    squares[i] = this.state.xIsNext ? 'X' : 'O';
-
-    // Update state by replacing squares with new modified copy and flipping xIsNext.
-    this.setState({
-      squares: squares,
-      xIsNext: !this.state.xIsNext,
-    });
+    return <Square value={this.props.squares[i]} handleClick={() => this.props.handleClick(i)} />;
   }
 
   render() {
-    // Checks if a player won. If winner, returns symbol of winner which is used in winner message.
-    const winner = calculateWinner(this.state.squares);
-
-    // Making status message string.
-    let status = winner ? 'Winner: ' + winner : 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
-
     return (
       <div>
-        <div className="status">{status}</div>
         <div className="board-row">
           {this.renderSquare(0)}
           {this.renderSquare(1)}
@@ -89,15 +52,71 @@ class Board extends React.Component {
 
 // React component that is parent of Board component.
 class Game extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      history: [{squares: Array(9).fill(null)}],
+      stepNumber: 0,
+      xIsNext: true,
+    };
+  }
+
+  // When a square is clicked, the value squares[i] changes from null to 'X'/'O'.
+  handleClick(i) {
+    // Make copy of squares state.
+    const history = this.state.history.slice(0, this.state.stepNumber + 1);
+    const current = history[history.length - 1];
+    const squares = current.squares.slice();
+
+    // Checks if winner declared or square already clicked. If so, function terminates.
+    if(calculateWinner(squares) || squares[i]) {
+      return;
+    }
+
+    // 'X' or 'O' is chosen based on boolean flag state xIsNext.
+    squares[i] = this.state.xIsNext ? 'X' : 'O';
+
+    // Update state by replacing squares with new modified copy and flipping xIsNext.
+    this.setState({
+      history: history.concat([{squares: squares}]),
+      stepNumber: history.length,
+      xIsNext: !this.state.xIsNext,
+    });
+  }
+
+  jumpTo(step) {
+    this.setState({
+      stepNumber: step,
+      xIsNext: (step % 2) === 0,
+    });
+  }
+
   render() {
+    const history = this.state.history;
+    const current = history[this.state.stepNumber];
+    // Checks if a player won. If winner, returns symbol of winner which is used in winner message.
+    const winner = calculateWinner(current.squares);
+
+    const moves = history.map((step, move) => {
+      const desc = move ? 'Go to move #' + move : 'Go to game start';
+      return (
+        <li key={move} >
+          <button onClick={() => this.jumpTo(move)}>{desc}</button>
+        </li>
+      );
+    });
+
+    // Making status message string.
+    const status = winner ? 'Winner: ' + winner : 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
+
     return (
       <div className="game">
         <div className="game-board">
-          <Board />
+          <Board squares={current.squares} handleClick={(i) => this.handleClick(i)} />
         </div>
         <div className="game-info">
-          <div>{/* status */}</div>
-          <ol>{/* TODO */}</ol>
+          <div>{status}</div>
+          <ol>{moves}</ol>
         </div>
       </div>
     );
@@ -129,6 +148,7 @@ function calculateWinner(squares) {
     [2, 4, 6]
   ];
 
+  // Check if a player created one of the winning lines. If so, return winning player's symbol.
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
