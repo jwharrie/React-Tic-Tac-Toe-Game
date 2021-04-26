@@ -39,12 +39,18 @@ class Board extends React.Component {
 
   // When a square is clicked, the value squares[i] changes from null to 'X'/'O'.
   handleClick(i) {
+    // Make copy of squares state.
     const squares = this.state.squares.slice();
+
+    // Checks if winner declared or square already clicked. If so, function terminates.
     if(calculateWinner(squares) || squares[i]) {
       return;
     }
 
+    // 'X' or 'O' is chosen based on boolean flag state xIsNext.
     squares[i] = this.state.xIsNext ? 'X' : 'O';
+
+    // Update state by replacing squares with new modified copy and flipping xIsNext.
     this.setState({
       squares: squares,
       xIsNext: !this.state.xIsNext,
@@ -52,8 +58,10 @@ class Board extends React.Component {
   }
 
   render() {
-    // Message displayed to users.
+    // Checks if a player won. If winner, returns symbol of winner which is used in winner message.
     const winner = calculateWinner(this.state.squares);
+
+    // Making status message string.
     let status = winner ? 'Winner: ' + winner : 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
 
     return (
@@ -101,7 +109,15 @@ ReactDOM.render(
   document.getElementById('root')
 );
 
+/*
+Determines if a player won.
+Parameters:
+  * squares: current state in Board
+Returns either null (no winner) or 'X'/'O' (winner)
+*/
 function calculateWinner(squares) {
+  // Array of square indices that must be filled by same symbol for a player to win.
+  // Includes all horizontal, vertical and diagonal lines of tic-tac-toe board.
   const lines = [
     [0, 1, 2],
     [3, 4, 5],
@@ -112,11 +128,14 @@ function calculateWinner(squares) {
     [0, 4, 8],
     [2, 4, 6]
   ];
+
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
       return squares[a];
     }
   }
+
+  // No player has won. Return null.
   return null;
 }
