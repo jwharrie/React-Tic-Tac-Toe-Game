@@ -98,8 +98,11 @@ class Game extends React.Component {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
 
-    // Checks if a player won. If winner, returns symbol of winner which is used in winner message.
+    // Create status message for players. Tells players if a player won, if draw occurs or who has the next turn.
+    let status;
     const winner = calculateWinner(current.squares);
+    status = winner ? 'Winner: ' + winner : 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
+    if (!winner && this.state.stepNumber === 9) status = 'Draw! No player has won. Please play again.';
 
     // Creates set of buttons that let you jump to a specific move in game's history.
     const moves = history.map((step, move) => {
@@ -110,9 +113,6 @@ class Game extends React.Component {
         </li>
       );
     });
-
-    // Making status message string.
-    const status = winner ? 'Winner: ' + winner : 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
 
     return (
       <div className="game">
