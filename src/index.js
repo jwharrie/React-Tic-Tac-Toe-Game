@@ -102,7 +102,7 @@ class Game extends React.Component {
     let status;
     const winner = calculateWinner(current.squares);
     status = winner ? 'Winner: ' + winner : 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
-    if (!winner && this.state.stepNumber === 9) status = 'Draw! No player has won. Please play again.';
+    if (!winner && this.state.stepNumber === 9) status = 'Draw!';
 
     // Creates set of buttons that let you jump to a specific move in game's history.
     const moves = history.map((step, move) => {
@@ -120,7 +120,7 @@ class Game extends React.Component {
           <Board squares={current.squares} handleClick={(i) => this.handleClick(i)} />
         </div>
         <div className="game-info">
-          <div>{status}</div>
+          <div className="status">{status}</div>
           <ol>{moves}</ol>
         </div>
       </div>
