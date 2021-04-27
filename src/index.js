@@ -99,10 +99,21 @@ class Game extends React.Component {
     const current = history[this.state.stepNumber];
 
     // Create status message for players. Tells players if a player won, if draw occurs or who has the next turn.
+    // css properties of status
     let status;
+    let statusClass = 'status';
     const winner = calculateWinner(current.squares);
-    status = winner ? 'Winner: ' + winner : 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
-    if (!winner && this.state.stepNumber === 9) status = 'Draw!';
+    if (winner) {
+      status = 'Winner: ' + winner;
+      statusClass = 'status-done';
+    }
+    else if (this.state.stepNumber === 9) {
+      status = 'Draw!';
+      statusClass = 'status-done';
+    }
+    else {
+      status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
+    }
 
     // Creates set of buttons that let you jump to a specific move in game's history.
     const moves = history.map((step, move) => {
@@ -120,8 +131,8 @@ class Game extends React.Component {
           <Board squares={current.squares} handleClick={(i) => this.handleClick(i)} />
         </div>
         <div className="game-info">
-          <div className="status">{status}</div>
-          <ol>{moves}</ol>
+          <div className={statusClass}>{status}</div>
+          <ul>{moves}</ul>
         </div>
       </div>
     );

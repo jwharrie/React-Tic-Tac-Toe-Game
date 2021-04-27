@@ -5,6 +5,7 @@ body {
   
   ol, ul {
     padding-left: 30px;
+    list-style-type: none;
   }
   
   .board-row:after {
@@ -15,6 +16,11 @@ body {
   
   .status {
     font-size: 2em;
+  }
+
+  .status-done {
+    font-size: 4em;
+    font-weight: bold;
   }
   
   .square {
